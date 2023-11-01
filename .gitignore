@@ -35,3 +35,10 @@
 # Licenses
 *.APACHE
 *.MIT
+
+# Paths
+build
+bin
+lib
+dependencies
+include

@@ -1,7 +1,8 @@
 ﻿cmake_minimum_required(VERSION 3.15)
 
 project(PeerToPeerNetwork)
-set(PARALLEL_BUILD OFF)
+set(PARALLEL_BUILD ON)
+set(CMAKE_CXX_STANDARD  17)
 #
 # -----------------------------------------
 #
@@ -15,22 +16,38 @@ endif()
 if(NOT RELATIVE_INSTALL_FOLDER)
 	set(RELATIVE_INSTALL_FOLDER lib)
 endif()
+
+if(CMAKE_GENERATOR STREQUAL "Ninja")
+    message("CMake was configured using Ninja")
+else()
+    set(PARALLEL_BUILD OFF) # Multithreading does mostly not work if not configured using ninja
+    message("CMake was not configured using Ninja")
+endif()
  
 # Set output paths
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/${RELATIVE_BUILD_FOLDER}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/${RELATIVE_BUILD_FOLDER}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/${RELATIVE_BUILD_FOLDER}")
 
+set(INSTALL_LIB_PATH "${CMAKE_INSTALL_PREFIX}/${RELATIVE_INSTALL_FOLDER}")
+set(INSTALL_BIN_PATH "${CMAKE_INSTALL_PREFIX}/bin")
+
+# create bin folder
+file(MAKE_DIRECTORY ${INSTALL_BIN_PATH})
+
 set(QT_LOCATOR_CMAKE "${CMAKE_CURRENT_SOURCE_DIR}/QtLocator.cmake")
+
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 if(PARALLEL_BUILD)
 	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} /MP)
 	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} /MP)
 endif()
 
-link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 
+include(utility.cmake)
+include(dependencies.cmake)
 
 add_subdirectory(core)
 add_subdirectory(Examples)
