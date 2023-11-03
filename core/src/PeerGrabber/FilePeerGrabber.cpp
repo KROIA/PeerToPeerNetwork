@@ -142,7 +142,7 @@ namespace P2PN
 	}
 	std::string FilePeerGrabber::createFileName(const PeerInfo& info) const
 	{
-		return "PEER_" + info.getName();
+		return "PEER_" + info.getNetworkID();
 	}
 
 	bool FilePeerGrabber::deleteFile(const std::string& filePath) const

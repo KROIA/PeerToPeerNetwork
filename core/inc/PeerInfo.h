@@ -13,12 +13,18 @@ namespace P2PN
 
 		bool operator==(const PeerInfo& other) const;
 		bool operator!=(const PeerInfo& other) const;
+
+		bool equalNetworkID(const PeerInfo& other) const;
+		
 		
 		void setIP(const std::string& ip);
 		const std::string& getIP() const;
 
-		void setName(const std::string& name);
-		const std::string& getName() const;
+		void setHostName(const std::string& name);
+		const std::string& getHostName() const;
+
+		void setUserName(const std::string& name);
+		const std::string& getUserName() const;
 
 		void setPort(quint16 port);
 		quint16 getPort() const;
@@ -29,12 +35,16 @@ namespace P2PN
 		std::string serialize() const;
 		bool deserialize(const std::string& serialData); 
 
+		std::string getNetworkID() const;
+
 	private:
 		std::string m_ip;
 		quint16 m_port;
-		std::string m_name;
+		std::string m_hostName;
+		std::string m_userName;
 
-		static const QString s_jsonKey_name;
+		static const QString s_jsonKey_hostName;
+		static const QString s_jsonKey_userName;
 		static const QString s_jsonKey_ip;
 		static const QString s_jsonKey_port;
 	};

@@ -21,6 +21,7 @@ namespace P2PN
     public:
         static std::string getThisHostIP();
         static std::string getThisHostName();
+        static std::string getThisUserName();
         static PeerInfo getThisPeerInfoInitial();
 
         static void startProfiler();

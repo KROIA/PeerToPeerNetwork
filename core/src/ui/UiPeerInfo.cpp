@@ -16,7 +16,8 @@ namespace P2PN
 
 	void UiPeerInfo::update(const PeerInfo& peer)
 	{
-		ui.hostName_label->setText(peer.getName().c_str());
+		ui.user_label->setText(peer.getUserName().c_str());
+		ui.hostName_label->setText(peer.getHostName().c_str());
 		ui.ip_label->setText(peer.getIP().c_str());
 		ui.port_label->setText(QString::number(peer.getPort()));
 	}

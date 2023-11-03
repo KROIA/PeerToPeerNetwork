@@ -1,5 +1,6 @@
 // peertopeernetwork.cpp
 #include <iostream>
+#include <Windows.h>
 #include "peertopeernetwork.h"
 #include <qhostinfo.h>
 #include <QDebug>
@@ -35,10 +36,19 @@ namespace P2PN
     {
         return QHostInfo::localHostName().toStdString();
     }
+    std::string PeerToPeerNetwork::getThisUserName()
+    {
+        char acUserName[100];
+        DWORD nUserName = sizeof(acUserName);
+        if (GetUserName(acUserName, &nUserName)) 
+            return acUserName;
+        return "";
+    }
     PeerInfo PeerToPeerNetwork::getThisPeerInfoInitial()
     {
         PeerInfo info;
-        info.setName(getThisHostName());
+        info.setHostName(getThisHostName());
+        info.setUserName(getThisUserName());
         info.setIP(getThisHostIP());
 
         return info;

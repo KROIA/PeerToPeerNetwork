@@ -3,26 +3,38 @@
 
 namespace P2PN
 {
-	const QString PeerInfo::s_jsonKey_name = "name";
+	const QString PeerInfo::s_jsonKey_hostName = "host";
+	const QString PeerInfo::s_jsonKey_userName = "user";
 	const QString PeerInfo::s_jsonKey_ip   = "IP";
-	const QString PeerInfo::s_jsonKey_port   = "PORT";
+	const QString PeerInfo::s_jsonKey_port = "PORT";
 
 	PeerInfo::PeerInfo()
 		: m_ip("")
 		, m_port(0)
-		, m_name("")
+		, m_hostName("")
+		, m_userName("")
 	{
 
 	}
 	bool PeerInfo::operator==(const PeerInfo& other) const
 	{
 		if (m_ip != other.m_ip)	return false;
-		if (m_name != other.m_name)	return false;
+		if (m_port != other.m_port)	return false;
+		if (m_userName != other.m_userName)	return false;
+		if (m_hostName != other.m_hostName)	return false;
+
 		return true;
 	}
 	bool PeerInfo::operator!=(const PeerInfo& other) const
 	{ 
 		return !operator==(other);
+	}
+
+	bool PeerInfo::equalNetworkID(const PeerInfo& other) const
+	{
+		if (m_ip != other.m_ip) return false;
+		if (m_port != other.m_port) return false;
+		return true;
 	}
 
 
@@ -35,18 +47,27 @@ namespace P2PN
 		return m_ip;
 	}
 
-	void PeerInfo::setName(const std::string& name)
+	void PeerInfo::setHostName(const std::string& name)
 	{
-		m_name = name;
+		m_hostName = name;
 	}
-	const std::string& PeerInfo::getName() const
+	const std::string& PeerInfo::getHostName() const
 	{
-		return m_name;
+		return m_hostName;
+	}
+	void PeerInfo::setUserName(const std::string& name)
+	{
+		m_userName = name;
+	}
+	const std::string& PeerInfo::getUserName() const
+	{
+		return m_userName;
 	}
 	void PeerInfo::setPort(quint16 port)
 	{
 		m_port = port;
 	}
+	
 	quint16 PeerInfo::getPort() const
 	{
 		return m_port;
@@ -56,7 +77,8 @@ namespace P2PN
 	{
 		QJsonObject obj;
 
-		obj[s_jsonKey_name] = m_name.c_str();
+		obj[s_jsonKey_hostName] = m_hostName.c_str();
+		obj[s_jsonKey_userName] = m_userName.c_str();
 		obj[s_jsonKey_ip]   = m_ip.c_str();
 		obj[s_jsonKey_port] = m_port;
 
@@ -66,13 +88,15 @@ namespace P2PN
 	{
 		bool success = true;
 
-		success &= obj.contains(s_jsonKey_name);
+		success &= obj.contains(s_jsonKey_hostName);
+		success &= obj.contains(s_jsonKey_userName);
 		success &= obj.contains(s_jsonKey_ip);
 		success &= obj.contains(s_jsonKey_port);
 		if (!success)
 			return false;
 
-		m_name = obj[s_jsonKey_name].toString().toStdString();
+		m_hostName = obj[s_jsonKey_hostName].toString().toStdString();
+		m_userName = obj[s_jsonKey_userName].toString().toStdString();
 		m_ip   = obj[s_jsonKey_ip].toString().toStdString();
 
 		int portValue = obj[s_jsonKey_port].toInt(10);
@@ -87,7 +111,7 @@ namespace P2PN
 	std::string PeerInfo::serialize() const
 	{
 		QJsonDocument jsonDoc(getJson());
-		return jsonDoc.toJson();
+		return std::string(jsonDoc.toJson().data());
 	}
 	bool PeerInfo::deserialize(const std::string& serialData)
 	{
@@ -96,5 +120,10 @@ namespace P2PN
 			return setJson(jsonDoc.object());
 		}
 		return false;
+	}
+
+	std::string PeerInfo::getNetworkID() const
+	{
+		return m_ip + "_" + std::to_string(m_port);
 	}
 }
